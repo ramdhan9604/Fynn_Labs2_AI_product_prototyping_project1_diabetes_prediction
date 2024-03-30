@@ -9,6 +9,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 import pickle
 
+
 model = open('model.pkl', 'rb')
 classifier = pickle.load(model)
 
@@ -44,12 +45,17 @@ age = st.number_input("Age:")
 st.markdown('Age: Age (years)')
 
 
+
 submit = st.button('Predict')
 st.markdown('Outcome: Class variable (0 or 1)')
 
 
 if submit:
-    prediction = classifier.predict([[glucose, bp, skin, insulin, bmi, dpf, age]])
+    data = np.array([glucose, bp, skin, insulin, bmi, dpf, age]).reshape(1, -1)
+    scaler = StandardScaler()
+    scaler.fit(data)  # Fit scaler to input data
+    standardized_data = scaler.transform(data)
+    prediction = classifier.predict(standardized_data)
     if prediction == 0:
         st.write('Congratulation!',name,'You are not diabetic')
     else:
